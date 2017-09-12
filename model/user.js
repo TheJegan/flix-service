@@ -41,9 +41,19 @@ User.findAll = function () {
   return defer.promise;
 }
 
-// User.findById = function(id){
+User.findById = function(id){
+  var defer = q.defer();
+  // User
+  User.find({_id: id}, (err, u) => {
+    if (!err) {
+      defer.resolve(u);
+    } else {
+      defer.reject(err);
+    }
+  });
 
-// }
+  return defer.promise;
+}
 
 // User.UpdateById = function (id) {
 

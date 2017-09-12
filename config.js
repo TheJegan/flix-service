@@ -52,7 +52,8 @@ var config = {
       console.log(`user set ${userId}`);
       User.findOne({ _id: userId }, (err, u) => {
         if (!err) {
-          req.user = u;
+          // req.user = u;
+          res.locals.user = u;
           next();
         }
       })

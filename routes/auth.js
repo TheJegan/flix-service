@@ -7,11 +7,12 @@ var GoogleStrategy = require('passport-google-oauth2').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
 var env = require('../config');
 var User = require('../model/user');
+var jwt = require('jsonwebtoken');
 // var redis = require('redis');
 // var port = env.redis.port;
 // var host = env.redis.host;
 // var client = redis.createClient(port, host);
-var jwt = require('jsonwebtoken');
+
 
 const serverUrl = env.UIAddr;
 //Implement passport
@@ -105,7 +106,8 @@ passport.use(new LocalStrategy({
       let auth = {
         token: token,
         // profileId: user._id,
-        displayName: user.displayName
+        displayName: user.displayName,
+        role: user.role
       };
 
       // client.set(user._id.toString(), JSON.stringify(user));
@@ -127,7 +129,6 @@ passport.use(new GoogleStrategy({
     console.log('tokenSecret: ' + tokenSecret);
     console.log('profile: ' + profile);
     console.log('done: ' + done);
-
 
     //todo: if twitter profile change, update
     User.findOne({ oauthID: profile.id }, function (err, user) {

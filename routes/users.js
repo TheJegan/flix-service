@@ -35,13 +35,21 @@ router.get('/', corsSolution, config.isAuthenticated, config.isAdmin, function (
   User.findAll().then(users => {
     res.status(200).send(users);
   }, err => {
-    res.status(400).send(err);
+    res.status(500).send(err);
   });
 
 });
 
+router.get('/me', corsSolution, config.isAuthenticated, function (req, res, next) {
+  let user = res.locals.user;
+
+  console.log('users');
+  console.log(user);
+
+  res.status(200).send(user);
+});
+
 router.get('/:id', corsSolution, function (req, res, next) {
-  // let userId = req.params.id;
 
   // User.findOne({ _id: userId }, (err, u) => {
   //   if (!err) {
