@@ -29,6 +29,17 @@ router.options('/:id', corsSolution, (req, res, next) => {
   next();
 });
 
+router.delete('/:id', corsSolution, (req, res, next) => {
+
+  Show.find({ _id: req.params.id }, (err, show)=>{
+    if (!err) {
+      res.status(200).send(episode[0]);
+    } else {
+      res.status(400).send(err);
+    }
+  }).remove().exec();
+});
+
 router.get('/', env.isAuthenticated, corsSolution, (req, res, next) => {
   console.log('getting shows');
 
@@ -87,7 +98,7 @@ router.post('/', env.isAuthenticated, corsSolution, (req, res, next) => {
   let name = req.body.name;
   let description = req.body.description;
   let coverUrl = req.body.coverUrl;
-  let user = '';
+  let user = res.locals.user;
   // let user = req.user._id || '';
   // let episode = req.body.episode;
 
@@ -95,7 +106,7 @@ router.post('/', env.isAuthenticated, corsSolution, (req, res, next) => {
     name: name,
     description: description,
     coverUrl: coverUrl,
-    createdBy: user
+    createdBy: user._id
   });
 
   show.save(err => {

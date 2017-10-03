@@ -112,14 +112,18 @@ router.post('/:seasonId', corsSolution, (req, res, next) => {
   });
 });
 
-// router.delete('/:seasonId', corsSolution, (req, res, next) => {
-//   Season.delete(req.params.seasonId, (err, season) => {
-//     if (!err) {
-//       res.status(200).send(season);
-//     } else {
-//       res.status(400).send(err);
-//     }
-//   })
-// });
+router.options('/:id', corsSolution, (req, res, next) => {
+  next();
+});
+
+router.delete('/:seasonId', corsSolution, (req, res, next) => {
+  Season.find(req.params.seasonId, (err, season) => {
+    if (!err) {
+      res.status(200).send(season);
+    } else {
+      res.status(400).send(err);
+    }
+  }).remove().exec();
+});
 
 module.exports = router;
