@@ -62,6 +62,7 @@ var config = {
 
   },
   isAdmin: (req, res, next) => {
+    req.user = res.locals.user;
     if (req.user.role === 'admin') {
       next();
     } else {

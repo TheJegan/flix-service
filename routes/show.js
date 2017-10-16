@@ -33,7 +33,7 @@ router.delete('/:id', corsSolution, (req, res, next) => {
 
   Show.find({ _id: req.params.id }, (err, show)=>{
     if (!err) {
-      res.status(200).send(episode[0]);
+      res.status(200).send(show[0]);
     } else {
       res.status(400).send(err);
     }
@@ -142,10 +142,14 @@ router.get('/:showId', env.isAuthenticated, corsSolution, (req, res, next) => {
 
 //create season
 router.post('/:showId', env.isAuthenticated, corsSolution, (req, res, next) => {
+
+
   let name = req.body.name;
   let coverUrl = req.body.coverUrl;
   let description = req.body.description;
   let _showId = req.params.showId;
+
+  console.log(_showId);
 
   let season = new Season({
     name: name,
@@ -174,6 +178,7 @@ router.post('/:showId', env.isAuthenticated, corsSolution, (req, res, next) => {
 
 //create episode
 router.post('/:showId/seasons/:seasonId', env.isAuthenticated, corsSolution, (req, res, next) => {
+  console.log('creating episode');
   // let showId = req.params.showId;
   let seasonId = req.params.seasonId;
   let name = req.body.name;

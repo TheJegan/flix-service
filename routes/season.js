@@ -81,6 +81,7 @@ router.get('/:seasonId/episodes', corsSolution, (req, res, next) => {
 
 //create episode
 router.post('/:seasonId', corsSolution, (req, res, next) => {
+  console.log('create episode');
   // let showId = req.params.showId;
   let seasonId = req.params.seasonId;
   let name = req.body.name;
