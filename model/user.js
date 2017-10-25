@@ -16,7 +16,7 @@ var userSchema = new mongoose.Schema({
   isSuspended: { type: Boolean }, default: false,
   token: String,
   notes: String,
-  saltValue: "",
+  salt: String,
 });
 
 

@@ -4,7 +4,10 @@ const User = require('../model/user');
 // var redis = require('redis');
 var config = require('../config');
 // var client = redis.createClient(config.redis.port, config.redis.host);
-
+var helpers = require("../helpers");
+var guid = require('../guid');
+const saltRounds = 10;
+var bcrypt = require('bcrypt');
 
 let corsSolution = (req, res, next) => {
 
@@ -81,11 +84,10 @@ router.put('/:id', corsSolution, (req, res, next) => {
 });
 
 router.post('/', corsSolution, (req, res, next) => {
+  console.log('entering users')
   let username = req.body.username;
   let displayName = req.body.displayName;
   let password = req.body.password;
-
-  // let passwordSalt = salt(password);
   let confirm = req.body.confirm;
 
   if (password !== confirm) {
@@ -98,24 +100,30 @@ router.post('/', corsSolution, (req, res, next) => {
     return;
   }
 
-  let user = {
-    username: req.body.username,
-    password: req.body.password,
-    displayName: req.body.displayName
-  };
 
-  User.create(user, (err, u) => {
-    if (!err) {
-      res.send(u)
-    } else {
-      res.send(err);
-    }
+
+  bcrypt.genSalt(saltRounds, function (err, salt) {
+    bcrypt.hash(password, salt, function(err, hash) {
+        // Store hash in your password DB.
+      console.log('hash');
+        console.log(hash);
+
+        let user = {
+          username: req.body.username,
+          password: hash,
+          displayName: req.body.displayName,
+          salt: salt
+        };
+
+        User.create(user, (err, u) => {
+          if (!err) {
+            res.send(u)
+          } else {
+            res.send(err);
+          }
+        });
+    });
   });
 });
-
-
-// hashpassword = () => {
-
-// }
 
 module.exports = router;

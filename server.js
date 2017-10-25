@@ -16,7 +16,31 @@ var episode = require('./routes/episode');
 var config = require('./config');
 var mongoose = require('mongoose');
 var app = express();
+var swaggerJSDoc = require('swagger-jsdoc');
 // var redis = require('redis');
+
+//swagger ui initialiization
+// swagger definition
+var swaggerDefinition = {
+  info: {
+    title: 'Node Swagger API',
+    version: '1.0.0',
+    description: 'Demonstrating how to describe a RESTful API with Swagger',
+  },
+  host: 'localhost:3000',
+  basePath: '/',
+};
+
+// options for the swagger docs
+var options = {
+  // import swaggerDefinitions
+  swaggerDefinition: swaggerDefinition,
+  // path to the API docs
+  apis: ['./routes/*.js'],
+};
+
+var swaggerSpec = swaggerJSDoc(options);
+//swagger ui initialization
 
 app.use(session({ secret: 'topsecret', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
@@ -64,6 +88,11 @@ app.use(function (req, res, next) {
   next(err);
 });
 
+app.get('/swagger.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
 // error handlers
 
 // development error handler
@@ -79,6 +108,8 @@ if (app.get('env') === 'development') {
     console.log(`\n\n\nmessage: ${err.message}`)
   });
 }
+
+// serve swagger
 
 // production error handler
 // no stacktraces leaked to user

@@ -8,6 +8,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var env = require('../config');
 var User = require('../model/user');
 var jwt = require('jsonwebtoken');
+var bcrypt = require('bcrypt');
 // var redis = require('redis');
 // var port = env.redis.port;
 // var host = env.redis.host;
@@ -86,6 +87,7 @@ passport.use(new TwitterStrategy({
   }
 ));
 
+//make object oriented
 passport.use(new LocalStrategy({
   usernameField: 'username',
   passwordField: 'password',
@@ -98,22 +100,29 @@ passport.use(new LocalStrategy({
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
 
-      let payload = {
-        userId: user._id
-      }
-      let token = jwt.sign(payload, env.AUTH_TOKEN_SECRET, { expiresIn: '4h' });
 
-      let auth = {
-        token: token,
-        // profileId: user._id,
-        displayName: user.displayName,
-        role: user.role
-      };
 
-      // client.set(user._id.toString(), JSON.stringify(user));
+      bcrypt.hash(password, user.salt, function (err, hash) {
+        // Store hash in your password DB.
+        if (user.password === hash) {
+          let payload = {
+            userId: user._id
+          }
+          let token = jwt.sign(payload, env.AUTH_TOKEN_SECRET, { expiresIn: '4h' });
 
-      return done(null, auth);
-    }).jso;
+          let auth = {
+            token: token,
+            // profileId: user._id,
+            displayName: user.displayName,
+            role: user.role
+          };
+
+          return done(null, auth);
+        } else {
+          return done({msg: 'unauthorize'})
+        }
+      })
+    });
   }
 ));
 
